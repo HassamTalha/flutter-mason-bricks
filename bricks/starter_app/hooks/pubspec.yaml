@@ -1,0 +1,8 @@
+name: starter_app_hooks
+description: Hooks for starter_app brick
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  mason: ^0.1.2

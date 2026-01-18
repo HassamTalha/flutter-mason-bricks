@@ -1,0 +1,40 @@
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+
+class FirebaseStorageService {
+  FirebaseStorageService(this._storage);
+
+  final FirebaseStorage _storage;
+
+  /// Upload file
+  Future<String> uploadFile({
+    required String path,
+    required File file,
+  }) async {
+    final ref = _storage.ref().child(path);
+    await ref.putFile(file);
+    return ref.getDownloadURL();
+  }
+
+  /// Delete file
+  Future<void> deleteFile(String path) {
+    return _storage.ref().child(path).delete();
+  }
+
+  /// Get file download URL
+  Future<String> getDownloadURL(String path) {
+    return _storage.ref().child(path).getDownloadURL();
+  }
+
+  /// Get reference to a storage path
+  Reference ref(String path) {
+    return _storage.ref().child(path);
+  }
+
+  /// List files in a directory
+  Future<ListResult> listFiles(String path) {
+    return _storage.ref().child(path).listAll();
+  }
+
+  
+}

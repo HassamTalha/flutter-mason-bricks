@@ -1,0 +1,68 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class FirebaseFirestoreService {
+  FirebaseFirestoreService(this._firestore);
+
+  final FirebaseFirestore _firestore;
+
+  /// Generic collection reference
+  CollectionReference<Map<String, dynamic>> collection(String path) {
+    return _firestore.collection(path);
+  }
+
+  /// Get document
+  Future<DocumentSnapshot<Map<String, dynamic>>> getDoc(
+    String collection,
+    String docId,
+  ) {
+    return _firestore.collection(collection).doc(docId).get();
+  }
+
+  /// Set document
+  Future<void> setDoc(
+    String collection,
+    String docId,
+    Map<String, dynamic> data,
+    {bool merge = false}
+  ) {
+    return _firestore.collection(collection).doc(docId).set(data,  SetOptions(merge: merge));
+  }
+
+  /// Update document
+  Future<void> updateDoc(
+    String collection,
+    String docId,
+    Map<String, dynamic> data,
+  ) {
+    return _firestore.collection(collection).doc(docId).update(data);
+  }
+
+  /// Delete document
+  Future<void> deleteDoc(String collection, String docId) {
+    return _firestore.collection(collection).doc(docId).delete();
+  }
+
+  /// Listen to document changes
+  Stream<DocumentSnapshot<Map<String, dynamic>>> docStream(
+    String collection,
+    String docId,
+  ) {
+    return _firestore.collection(collection).doc(docId).snapshots();
+  }
+
+  /// Listen to collection changes
+  Stream<QuerySnapshot<Map<String, dynamic>>> collectionStream(
+    String collection,
+  ) {
+    return _firestore.collection(collection).snapshots();
+  }
+
+  /// Add document to collection
+  Future<DocumentReference<Map<String, dynamic>>> addDoc(
+    String collection,
+    Map<String, dynamic> data,
+  ) {
+    return _firestore.collection(collection).add(data);
+  }
+
+}

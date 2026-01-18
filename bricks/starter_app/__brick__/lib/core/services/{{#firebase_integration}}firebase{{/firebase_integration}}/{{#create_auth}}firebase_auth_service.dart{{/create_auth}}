@@ -1,0 +1,159 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
+class FirebaseAuthService {
+  final FirebaseAuth _auth;
+  FirebaseAuthService(this._auth);
+
+  //  Auth state listener
+  Stream<User?> authStateChanges() {
+    return _auth.authStateChanges();
+  }
+
+  User? get currentUser => _auth.currentUser;
+
+  //  Login
+  Future<void> signInWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    await _auth.signInWithEmailAndPassword(email: email, password: password);
+  }
+
+  //  Signup
+  Future<void> signUpWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+  }
+
+  //  Logout
+  Future<void> signOut() async {
+    await _auth.signOut();
+  }
+
+  //  Forgot password
+  Future<void> sendPasswordReset(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
+  }
+
+  //  Send email verification
+  Future<void> sendEmailVerification() async {
+    final user = _auth.currentUser;
+    if (user != null && !user.emailVerified) {
+      await user.sendEmailVerification();
+    }
+  }
+
+  //  Delete user
+  Future<void> deleteUser() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await user.delete();
+    }
+  }
+
+  // Update password
+  Future<void> updatePassword(String newPassword) async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await user.updatePassword(newPassword);
+    }
+  }
+
+  // Reload user
+  Future<void> reloadUser() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await user.reload();
+    }
+  }
+
+  // Sign in anonymously
+  Future<void> signInAnonymously() async {
+    await _auth.signInAnonymously();
+  }
+
+  // Link anonymous account to email/password
+  Future<void> linkAnonymousAccount(String email, String password) async {
+    final user = _auth.currentUser;
+    if (user != null && user.isAnonymous) {
+      final credential = EmailAuthProvider.credential(
+        email: email,
+        password: password,
+      );
+      await user.linkWithCredential(credential);
+    }
+  }
+
+  // Unlink provider
+  Future<void> unlinkProvider(String providerId) async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await user.unlink(providerId);
+    }
+  }
+
+  // Get ID token
+  Future<String?> getIdToken({bool forceRefresh = false}) async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      return await user.getIdToken(forceRefresh);
+    }
+    return null;
+  }
+
+  // Refresh ID token
+  Future<void> refreshIdToken() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await user.getIdToken(true);
+    }
+  }
+
+  // Check if email is verified
+  bool isEmailVerified() {
+    final user = _auth.currentUser;
+    return user?.emailVerified ?? false;
+  }
+
+  // Reauthenticate user
+  Future<void> reauthenticate(String email, String password) async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      final credential = EmailAuthProvider.credential(
+        email: email,
+        password: password,
+      );
+      await user.reauthenticateWithCredential(credential);
+    }
+  }
+
+  // Update display name
+  Future<void> updateDisplayName(String displayName) async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await user.updateDisplayName(displayName);
+    }
+  }
+
+  // Update photo URL
+  Future<void> updatePhotoURL(String photoURL) async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await user.updatePhotoURL(photoURL);
+    }
+  }
+
+  // Get ID token result
+  Future<IdTokenResult?> getIdTokenResult({bool forceRefresh = false}) async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      return await user.getIdTokenResult(forceRefresh);
+    }
+    return null;
+  }
+}

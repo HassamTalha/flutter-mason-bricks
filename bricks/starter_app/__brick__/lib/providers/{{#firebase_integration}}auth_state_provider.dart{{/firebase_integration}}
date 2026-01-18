@@ -1,0 +1,39 @@
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart'; // Use the specific annotation import
+import '../core/services/firebase/firebase_service.dart';
+
+// Ensure this matches the filename exactly
+part 'auth_state_provider.g.dart';
+
+/// Provides access to FirebaseServices (DI-friendly)
+@Riverpod(keepAlive: true)
+FirebaseServices firebaseServices(Ref ref) {
+  // Changed FirebaseServicesRef to Ref for simplicity
+  return FirebaseServices();
+}
+
+@riverpod
+Stream<User?> authChanges(Ref ref) {
+  return ref.watch(firebaseServicesProvider).auth.authStateChanges();
+}
+
+/// Global auth state provider
+@Riverpod(keepAlive: true)
+class AuthState extends _$AuthState {
+  @override
+  User? build() {
+    return ref.watch(authChangesProvider).value;
+  }
+
+  /// Logout user
+  Future<void> logout() async {
+    final services = ref.read(firebaseServicesProvider);
+    await services.auth.signOut();
+    state = null;
+    ref.invalidateSelf();
+  }
+
+  /// Convenience getter
+  bool get isAuthenticated => state != null;
+}
